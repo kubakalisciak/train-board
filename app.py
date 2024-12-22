@@ -12,7 +12,7 @@ def reload_train_api(station_code):
             time.sleep(60)
             time_now = dt.datetime.now()
             epoch_now = time_now.timestamp()
-            if epoch_now > int(train_data['reload_time']):
+            if epoch_now - 60 > int(train_data['reload_time']):
                 print_train_data(train.get_data(train.get_response(station_code)))
             else: pass
         except KeyboardInterrupt:

@@ -66,5 +66,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-print(type(get_response("5100002")))
