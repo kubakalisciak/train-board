@@ -7,19 +7,21 @@ def get_response(stationCode="5100002"):
 
 
 def get_data(response):
-    calculated_time = response['calculatedTime']
-    calculated_time = response['calculatedTime']
-    departure_time = datetime.fromtimestamp(calculated_time).strftime("%H:%M")
+    departure_time = response['timestamp']
+    reload_time = departure_time + int(response['delay']*60)
+    departure_time_object = datetime.fromtimestamp(int(departure_time))
+    departure_time = departure_time_object.strftime("%H:%M")
     return {
         'train_code': response['trainCode'],
-        'track_and_platform': validate_track_and_platform(response),
+        'track_and_platform': find_valid_track_and_platform(response),
         'arrival_station': response['arrivalStation'],
         'delay': response['delay'],
         'departure_time': departure_time,
+        'reload_time': reload_time,
         'intermediate_stations': get_intermediate_stations(response),
         'this_station': response['currentStation'],
         'amenities': response['amenities'],
-        'train_name': get_train_name(response)
+        'train_name': get_train_name(response),
     }
 
 
@@ -44,7 +46,7 @@ def get_train_name(response):
     return ""
 
 
-def validate_track_and_platform(response):
+def find_valid_track_and_platform(response):
     track = response["track"]
     platform = response["platform"]
     if track == "podroz" and platform == '<a class="btn btn-primary" href="':
@@ -53,7 +55,7 @@ def validate_track_and_platform(response):
 
 
 def main():
-    parameters = get_data(get_response("5100067"))
+    parameters = get_data(get_response("5100002"))
     print(f"{parameters['this_station']} | {parameters['track_and_platform']}")
     print(f"{parameters["train_code"]} {parameters["train_name"]} - {parameters["arrival_station"]}")
     print(f"{parameters["departure_time"]} (+{parameters["delay"]})")
@@ -64,3 +66,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+print(type(get_response("5100002")))
